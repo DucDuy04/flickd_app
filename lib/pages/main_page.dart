@@ -39,65 +39,78 @@ final selectedMoviePosterProvider =
     });
 
 class MainPage extends ConsumerWidget {
-  double? _deviceHeight;
-  double? _deviceWidth;
-
-  MainPageDataController? _mainPageDataController;
-  MainPageData? _mainPageData;
-
-  TextEditingController? _searchTextFieldController;
+  const MainPage({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    _deviceHeight = MediaQuery.of(context).size.height;
-    _deviceWidth = MediaQuery.of(context).size.width;
+    final deviceHeight = MediaQuery.of(context).size.height;
+    final deviceWidth = MediaQuery.of(context).size.width;
 
-    _mainPageDataController = ref.watch(
+    final mainPageDataController = ref.watch(
       mainPageDataControllerProvider.notifier,
     );
-    _mainPageData = ref.watch(mainPageDataControllerProvider);
+    final mainPageData = ref.watch(mainPageDataControllerProvider);
 
-    final _selectMoviePosterURL = ref.watch(selectedMoviePosterProvider);
-    final _selectedMoviePosterNotifier = ref.watch(
+    final selectMoviePosterURL = ref.watch(selectedMoviePosterProvider);
+    final selectedMoviePosterNotifier = ref.watch(
       selectedMoviePosterProvider.notifier,
     );
 
-    _searchTextFieldController = TextEditingController();
+    final searchTextFieldController = TextEditingController();
+    searchTextFieldController.text = mainPageData.searchText;
 
-    _searchTextFieldController?.text = _mainPageData!.searchText;
     return _buildUI(
-      _mainPageData,
-      _selectMoviePosterURL,
-      _selectedMoviePosterNotifier,
+      deviceHeight,
+      deviceWidth,
+      mainPageDataController,
+      mainPageData,
+      selectMoviePosterURL,
+      selectedMoviePosterNotifier,
+      searchTextFieldController,
     );
   }
 
   Widget _buildUI(
-    MainPageData? mainPageData,
-    String? _selectMoviePosterURL,
-    SelectedMoviePosterNotifier _notifier,
+    double deviceHeight,
+    double deviceWidth,
+    MainPageDataController mainPageDataController,
+    MainPageData mainPageData,
+    String? selectMoviePosterURL,
+    SelectedMoviePosterNotifier notifier,
+    TextEditingController searchTextFieldController,
   ) {
     return Scaffold(
       resizeToAvoidBottomInset: false,
       backgroundColor: Colors.black,
       body: Container(
-        height: _deviceHeight,
-        width: _deviceWidth,
+        height: deviceHeight,
+        width: deviceWidth,
         child: Stack(
           children: [
-            _backgroundWidget(_selectMoviePosterURL),
-            _foregroundWidgets(mainPageData, _notifier),
+            _backgroundWidget(deviceHeight, deviceWidth, selectMoviePosterURL),
+            _foregroundWidgets(
+              deviceHeight,
+              deviceWidth,
+              mainPageDataController,
+              mainPageData,
+              notifier,
+              searchTextFieldController,
+            ),
           ],
         ),
       ),
     );
   }
 
-  Widget _backgroundWidget(String? selectMoviePosterURL) {
+  Widget _backgroundWidget(
+    double deviceHeight,
+    double deviceWidth,
+    String? selectMoviePosterURL,
+  ) {
     if (selectMoviePosterURL != null) {
       return Container(
-        width: _deviceWidth,
-        height: _deviceHeight,
+        width: deviceWidth,
+        height: deviceHeight,
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(10.0),
           image: DecorationImage(
@@ -114,32 +127,48 @@ class MainPage extends ConsumerWidget {
       );
     } else {
       return Container(
-        width: _deviceWidth,
-        height: _deviceHeight,
+        width: deviceWidth,
+        height: deviceHeight,
         color: Colors.black,
       );
     }
   }
 
   Widget _foregroundWidgets(
-    MainPageData? mainPageData,
+    double deviceHeight,
+    double deviceWidth,
+    MainPageDataController mainPageDataController,
+    MainPageData mainPageData,
     SelectedMoviePosterNotifier notifier,
+    TextEditingController searchTextFieldController,
   ) {
     return Center(
       child: Container(
-        padding: EdgeInsets.fromLTRB(0, _deviceHeight! * 0.02, 0, 0),
-        width: _deviceWidth! * 0.88,
+        padding: EdgeInsets.fromLTRB(0, deviceHeight * 0.02, 0, 0),
+        width: deviceWidth * 0.88,
         child: Column(
           mainAxisSize: MainAxisSize.max,
           mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            _topBarWidget(),
-            SizedBox(height: _deviceHeight! * 0.02),
+            _topBarWidget(
+              deviceHeight,
+              deviceWidth,
+              mainPageDataController,
+              mainPageData,
+              searchTextFieldController,
+            ),
+            SizedBox(height: deviceHeight * 0.02),
             Container(
-              height: _deviceHeight! * 0.83,
-              padding: EdgeInsets.symmetric(vertical: _deviceHeight! * 0.01),
-              child: _movieListViewWidget(mainPageData, notifier),
+              height: deviceHeight * 0.83,
+              padding: EdgeInsets.symmetric(vertical: deviceHeight * 0.01),
+              child: _movieListViewWidget(
+                deviceHeight,
+                deviceWidth,
+                mainPageDataController,
+                mainPageData,
+                notifier,
+              ),
             ),
           ],
         ),
@@ -147,9 +176,15 @@ class MainPage extends ConsumerWidget {
     );
   }
 
-  Widget _topBarWidget() {
+  Widget _topBarWidget(
+    double deviceHeight,
+    double deviceWidth,
+    MainPageDataController mainPageDataController,
+    MainPageData mainPageData,
+    TextEditingController searchTextFieldController,
+  ) {
     return Container(
-      height: _deviceHeight! * 0.08,
+      height: deviceHeight * 0.08,
       decoration: BoxDecoration(
         color: Colors.black54,
         borderRadius: BorderRadius.circular(20.0),
@@ -158,24 +193,36 @@ class MainPage extends ConsumerWidget {
         mainAxisSize: MainAxisSize.max,
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         crossAxisAlignment: CrossAxisAlignment.center,
-        children: [_searchFieldWidget(), _categorySelectionWidget()],
+        children: [
+          _searchFieldWidget(
+            deviceHeight,
+            deviceWidth,
+            mainPageDataController,
+            searchTextFieldController,
+          ),
+          _categorySelectionWidget(mainPageDataController, mainPageData),
+        ],
       ),
     );
   }
 
-  Widget _searchFieldWidget() {
-    final _border = InputBorder.none;
+  Widget _searchFieldWidget(
+    double deviceHeight,
+    double deviceWidth,
+    MainPageDataController mainPageDataController,
+    TextEditingController searchTextFieldController,
+  ) {
+    final border = InputBorder.none;
     return Container(
-      width: _deviceWidth! * 0.50,
-      height: _deviceHeight! * 0.05,
+      width: deviceWidth * 0.50,
+      height: deviceHeight * 0.05,
       child: TextField(
-        controller: _searchTextFieldController,
-        onSubmitted: (_input) =>
-            _mainPageDataController!.updateSearchText(_input),
+        controller: searchTextFieldController,
+        onSubmitted: (input) => mainPageDataController.updateSearchText(input),
         style: TextStyle(color: Colors.white),
         decoration: InputDecoration(
-          focusedBorder: _border,
-          border: _border,
+          focusedBorder: border,
+          border: border,
           prefixIcon: Icon(Icons.search, color: Colors.white24),
           hintStyle: TextStyle(color: Colors.white54),
           filled: false,
@@ -186,15 +233,18 @@ class MainPage extends ConsumerWidget {
     );
   }
 
-  Widget _categorySelectionWidget() {
+  Widget _categorySelectionWidget(
+    MainPageDataController mainPageDataController,
+    MainPageData mainPageData,
+  ) {
     return DropdownButton(
       dropdownColor: Colors.black38,
-      value: _mainPageData?.searchCategory,
+      value: mainPageData.searchCategory,
       icon: Icon(Icons.menu, color: Colors.white24),
       underline: Container(height: 1, color: Colors.white24),
-      onChanged: (_value) {
-        if (_value != null && _value.toString().isNotEmpty) {
-          _mainPageDataController!.updateSearchCategory(_value);
+      onChanged: (value) {
+        if (value != null && value.toString().isNotEmpty) {
+          mainPageDataController.updateSearchCategory(value);
         }
       },
       items: [
@@ -224,19 +274,22 @@ class MainPage extends ConsumerWidget {
   }
 
   Widget _movieListViewWidget(
-    MainPageData? mainPageData,
+    double deviceHeight,
+    double deviceWidth,
+    MainPageDataController mainPageDataController,
+    MainPageData mainPageData,
     SelectedMoviePosterNotifier notifier,
   ) {
-    final List<Movie> _movies = mainPageData?.movies ?? [];
+    final movies = mainPageData.movies;
 
-    if (_movies.length != 0) {
+    if (movies.isNotEmpty) {
       return NotificationListener(
-        onNotification: (_onScrollNotification) {
-          if (_onScrollNotification is ScrollEndNotification) {
-            final before = _onScrollNotification.metrics.extentBefore;
-            final max = _onScrollNotification.metrics.maxScrollExtent;
+        onNotification: (onScrollNotification) {
+          if (onScrollNotification is ScrollEndNotification) {
+            final before = onScrollNotification.metrics.extentBefore;
+            final max = onScrollNotification.metrics.maxScrollExtent;
             if (before == max) {
-              _mainPageDataController!.getMovies();
+              mainPageDataController.getMovies();
               return true;
             }
             return false;
@@ -244,21 +297,21 @@ class MainPage extends ConsumerWidget {
           return false;
         },
         child: ListView.builder(
-          itemCount: _movies.length,
-          itemBuilder: (BuildContext _context, int _count) {
+          itemCount: movies.length,
+          itemBuilder: (context, count) {
             return Padding(
               padding: EdgeInsets.symmetric(
-                vertical: _deviceHeight! * 0.01,
+                vertical: deviceHeight * 0.01,
                 horizontal: 0,
               ),
               child: GestureDetector(
                 onTap: () {
-                  notifier.setUrl(_movies[_count].posterUrl());
+                  notifier.setUrl(movies[count].posterUrl());
                 },
                 child: MovieTile(
-                  movie: _movies[_count],
-                  height: _deviceHeight! * 0.20,
-                  width: _deviceWidth! * 0.85,
+                  movie: movies[count],
+                  height: deviceHeight * 0.20,
+                  width: deviceWidth * 0.85,
                 ),
               ),
             );

@@ -29,7 +29,7 @@ class HTTPService {
     } on DioException catch (e) {
       print('Unable to perform get request');
       print('DioException: $e');
-      // return null;
     }
+    return null;
   }
 }

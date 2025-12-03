@@ -5,6 +5,7 @@ import 'package:get_it/get_it.dart';
 import '../models/app_config.dart';
 
 class Movie {
+  final int id;
   final String name;
   final String language;
   final bool isAdult;
@@ -15,6 +16,7 @@ class Movie {
   final String releaseDate;
 
   Movie({
+    required this.id,
     required this.name,
     required this.language,
     required this.isAdult,
@@ -27,6 +29,7 @@ class Movie {
 
   factory Movie.fromJson(Map<String, dynamic> _json) {
     return Movie(
+      id: _json['id'] ?? 0,
       name: _json['title'] ?? 'Unknown',
       language: _json['original_language'] ?? 'en',
       isAdult: _json['adult'] ?? false,

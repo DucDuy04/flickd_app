@@ -50,20 +50,52 @@ class MovieTile extends StatelessWidget {
                 ),
               ),
               SizedBox(width: 8),
-              Row(
+              Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
-                  Icon(Icons.star, color: Colors.amber, size: 16),
-                  SizedBox(width: 4),
-                  Text(
-                    movie.rating.toString(),
-                    style: TextStyle(color: Colors.white, fontSize: 14),
+                  Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Icon(Icons.star, color: Colors.amber, size: 16),
+                      SizedBox(width: 4),
+                      Text(
+                        movie.rating.toString(),
+                        style: TextStyle(color: Colors.white, fontSize: 14),
+                      ),
+                    ],
+                    // IconButton(
+                    //   padding: EdgeInsets.zero,
+                    //   constraints: BoxConstraints(),
+                    //   icon: Icon(
+                    //     isFavourite ? Icons.favorite : Icons.favorite_border,
+                    //     color: isFavourite ? Colors.red : Colors.white70,
+                    //     size: 22,
+                    //   ),
+                    //   tooltip: isFavourite
+                    //       ? 'Remove from favorites'
+                    //       : 'Add to favorites',
+                    //   onPressed: () {
+                    //     ref.read(favouritesProvider.notifier).toggle(movie.id);
+                    //     ScaffoldMessenger.of(context).showSnackBar(
+                    //       SnackBar(
+                    //         content: Text(
+                    //           isFavourite
+                    //               ? 'Removed from favorites'
+                    //               : 'Added to favorites',
+                    //         ),
+                    //         duration: Duration(milliseconds: 700),
+                    //       ),
+                    //     );
+                    //   },
+                    // ),
                   ),
                 ],
               ),
             ],
           ),
           Container(
-            padding: EdgeInsets.fromLTRB(0, height! * 0.02, 0, 0),
+            padding: EdgeInsets.fromLTRB(0, height * 0.02, 0, 0),
             child: Text(
               '${movie.language.toUpperCase()} | R: ${movie.isAdult} | ${movie.releaseDate}',
               style: TextStyle(color: Colors.white, fontSize: 12),
@@ -72,7 +104,7 @@ class MovieTile extends StatelessWidget {
           Expanded(
             child: Container(
               child: SingleChildScrollView(
-                padding: EdgeInsets.fromLTRB(0, height! * 0.07, 0, 0),
+                padding: EdgeInsets.fromLTRB(0, height * 0.07, 0, 0),
                 child: Text(
                   movie.description,
                   maxLines: 9,
