@@ -27,6 +27,7 @@ class Movie {
     required this.releaseDate,
   });
 
+  //Json->Movie
   factory Movie.fromJson(Map<String, dynamic> _json) {
     return Movie(
       id: _json['id'] ?? 0,
@@ -39,6 +40,20 @@ class Movie {
       rating: _json['vote_average'] ?? 0.0,
       releaseDate: _json['release_date'] ?? 'Unknown',
     );
+  }
+  //Movie->Json
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'title': name,
+      'original_language': language,
+      'adult': isAdult,
+      'overview': description,
+      'poster_path': posterPath,
+      'backdrop_path': backdropPath,
+      'vote_average': rating,
+      'release_date': releaseDate,
+    };
   }
 
   String posterUrl() {

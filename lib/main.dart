@@ -3,7 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 //Pages
 import './pages/splash_page.dart';
-import './pages/main_page.dart';
+import './pages/home_page.dart';
 
 void main() {
   runApp(
@@ -20,12 +20,13 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Flickd',
       initialRoute: 'home',
-      routes: {'home': (BuildContext context) => MainPage()},
+      routes: {'home': (BuildContext context) => HomePage()},
       theme: ThemeData(
         primarySwatch: Colors.blue,
-        visualDensity: VisualDensity.adaptivePlatformDensity,
+        visualDensity: VisualDensity
+            .adaptivePlatformDensity, //tối ưu giao diện theo nền tảng
       ),
-      home: MainPage(),
+      home: HomePage(),
     );
   }
 }

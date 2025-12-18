@@ -10,11 +10,12 @@ import '../models/movie.dart';
 import '../services/movie_service.dart';
 
 class MainPageDataController extends Notifier<MainPageData> {
+  //Notifier quản lý trạng thái MainPageData
   final MovieService _movieService = GetIt.instance<MovieService>();
 
   @override
   MainPageData build() {
-    // Gọi getMovies SAU khi build xong
+    //Future.microtask Gọi getMovies SAU khi build xong
     Future.microtask(() => getMovies());
     return MainPageData.initial();
   }
@@ -38,7 +39,10 @@ class MainPageDataController extends Notifier<MainPageData> {
         );
       }
       state = state.copyWith(
-        movies: [...state.movies, ..._movies],
+        movies: [
+          ...state.movies,
+          ..._movies,
+        ], //thêm _movies mới vào danh sách cũ (state.movies)
         page: state.page + 1,
       );
     } catch (e) {

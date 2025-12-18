@@ -9,26 +9,33 @@ import '../services/http_service.dart';
 import '../models/movie.dart';
 
 class MovieService {
+  //Lấy instance GetIt toàn cục
   final GetIt getIt = GetIt.instance;
 
+  //Khai báo biến _http kiểu HTTPService? (có thể null)
   HTTPService? _http;
 
+  //Khởi tạo MovieService, gán biến _http với instance HTTPService từ GetIt
+  //Nếu chưa đăng ký HTTPService trong GetIt, sẽ báo lỗi khi chạy
   MovieService() {
     _http = getIt<HTTPService>();
   }
 
   Future<List<Movie>> getPopularMovies({int? page}) async {
+    //Gọi method get của HTTPService với truyền path /movie/popular và query page
     Response? _response = await _http?.get(
       '/movie/popular',
       query: {'page': page},
     );
 
     if (_response?.statusCode == 200) {
-      Map _data = _response!.data;
+      //Nếu status code là 200 (thành công), parse dữ liệu
+      Map<String, dynamic> _data = _response!.data;
       List<Movie> _movies = [];
 
       for (var movieData in _data['results']) {
         try {
+          //Chuyển phần tử trong mảng result(Json) thành Movie và thêm vào list
           _movies.add(Movie.fromJson(movieData));
         } catch (e) {
           print('Error parsing movie: $e');
@@ -47,7 +54,7 @@ class MovieService {
       query: {'page': page},
     );
     if (_response?.statusCode == 200) {
-      Map _data = _response!.data;
+      Map<String, dynamic> _data = _response!.data;
       List<Movie> _movies = [];
 
       for (var movieData in _data['results']) {
@@ -71,7 +78,7 @@ class MovieService {
     );
 
     if (_response?.statusCode == 200) {
-      Map _data = _response!.data;
+      Map<String, dynamic> _data = _response!.data;
       List<Movie> _movies = [];
 
       for (var movieData in _data['results']) {

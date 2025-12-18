@@ -1,5 +1,6 @@
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
-import 'package:get_it/get_it.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 //models
@@ -8,37 +9,50 @@ import '../models/movie.dart';
 //controllers
 import '../controllers/wishlist_controller.dart';
 
-class MovieTile extends ConsumerWidget {
+class MovieWishlist extends ConsumerWidget {
   //hiển thị 1 ô thông tin phim
-  final GetIt getIt = GetIt.instance;
   final double height;
   final double width;
   final Movie movie;
 
-  MovieTile({required this.height, required this.width, required this.movie});
+  MovieWishlist({
+    required this.height,
+    required this.width,
+    required this.movie,
+  });
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final favourites = ref.watch(favouriteMoviesProvider);
-    final isFav = favourites.any((m) => m.id == movie.id);
-
-    return Container(
-      child: Row(
-        mainAxisSize:
-            MainAxisSize.max, //chiều ngang chiếm hết không gian có thể
-        mainAxisAlignment:
-            MainAxisAlignment.spaceBetween, //giữa các phần tử cách đều nhau
-        crossAxisAlignment:
-            CrossAxisAlignment.start, //căn phần tử theo đầu trên
-        children: [
-          _moviePosterWidget(movie.posterUrl()),
-          _movieInfoWidget(isFav, ref),
-        ],
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 12),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(14),
+        child: BackdropFilter(
+          filter: ImageFilter.blur(sigmaX: 15, sigmaY: 15),
+          child: Container(
+            decoration: BoxDecoration(
+              color: Colors.black.withOpacity(0.35), // nền hơi mờ
+              borderRadius: BorderRadius.circular(14),
+              border: Border.all(color: Colors.white12),
+            ),
+            padding: const EdgeInsets.all(12),
+            child: Row(
+              mainAxisSize: MainAxisSize.max,
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                _moviePosterWidget(movie.posterUrl()),
+                const SizedBox(width: 12),
+                _movieInfoWidget(ref),
+              ],
+            ),
+          ),
+        ),
       ),
     );
   }
 
-  Widget _movieInfoWidget(bool isFav, WidgetRef ref) {
+  Widget _movieInfoWidget(WidgetRef ref) {
     return Container(
       height: height, //chiều cao bằng với poster
       width: width * 0.63, //chiều rộng chiếm 63% chiều rộng tổng
@@ -88,26 +102,17 @@ class MovieTile extends ConsumerWidget {
                     ),
 
                     Positioned(
-                      // nút yêu thích ở góc dưới phải
-                      right: 0,
-                      bottom: -3,
-                      child: GestureDetector(
-                        //bắt sự kiện chạm
-                        onTap: () {
+                      // nút xóa ở góc phải
+                      right: 10,
+                      bottom: -20,
+                      child: IconButton(
+                        onPressed: () {
+                          //xóa phim khỏi danh sách yêu thích
                           ref
                               .read(favouriteMoviesProvider.notifier)
-                              .toggleFavorite(movie);
-                          // xử lý thêm / bỏ yêu thích
+                              .removeFavorite(movie.id);
                         },
-                        child: Padding(
-                          padding: EdgeInsets.only(top: 4),
-                          child: Icon(
-                            isFav ? Icons.favorite : Icons.favorite_border,
-                            color: isFav ? Colors.redAccent : Colors.white70,
-
-                            size: 20,
-                          ),
-                        ),
+                        icon: Icon(Icons.delete, color: Colors.grey, size: 20),
                       ),
                     ),
                   ],
@@ -115,19 +120,15 @@ class MovieTile extends ConsumerWidget {
               ),
             ],
           ),
-          Container(
+          Row(
             //hàng chứa thông tin phụ
-            //  padding: EdgeInsets.fromLTRB(0, height * 0.02, 0, 0),
-            child: Row(
-              children: [
-                Text(
-                  '${movie.language.toUpperCase()} | R: ${movie.isAdult} | ${movie.releaseDate}',
-                  style: TextStyle(color: Colors.white, fontSize: 12),
-                ),
-              ],
-            ),
+            children: [
+              Text(
+                '${movie.language.toUpperCase()} | R: ${movie.isAdult} | ${movie.releaseDate}',
+                style: TextStyle(color: Colors.white, fontSize: 12),
+              ),
+            ],
           ),
-          //SizedBox(height: 8),
           Expanded(
             child: SingleChildScrollView(
               //cho phép cuộn nếu text dài
@@ -146,11 +147,13 @@ class MovieTile extends ConsumerWidget {
   }
 
   Widget _moviePosterWidget(String _imageURL) {
-    return Container(
-      height: height, //chiều cao poster
-      width: width * 0.35, //chiều rộng poster chiếm 35% chiều rộng tổng
-      decoration: BoxDecoration(
-        image: DecorationImage(image: NetworkImage(_imageURL)), //ảnh từ url
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(12),
+      child: Image.network(
+        _imageURL,
+        height: height,
+        width: width * 0.35,
+        fit: BoxFit.cover,
       ),
     );
   }
