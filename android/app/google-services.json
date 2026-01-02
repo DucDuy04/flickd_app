@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "380826088506",
+    "project_id": "flickapp-b68ef",
+    "storage_bucket": "flickapp-b68ef.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:380826088506:android:01af18004806f098e6f103",
+        "android_client_info": {
+          "package_name": "com.example.flickd_app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCo4WdSTd-V0CpIooyjhIqF1zPISrLwdn0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

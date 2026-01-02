@@ -32,13 +32,13 @@ class MovieTile extends ConsumerWidget {
             CrossAxisAlignment.start, //căn phần tử theo đầu trên
         children: [
           _moviePosterWidget(movie.posterUrl()),
-          _movieInfoWidget(isFav, ref),
+          _movieInfoWidget(context, isFav, ref),
         ],
       ),
     );
   }
 
-  Widget _movieInfoWidget(bool isFav, WidgetRef ref) {
+  Widget _movieInfoWidget(BuildContext context, bool isFav, WidgetRef ref) {
     return Container(
       height: height, //chiều cao bằng với poster
       width: width * 0.63, //chiều rộng chiếm 63% chiều rộng tổng
@@ -93,11 +93,30 @@ class MovieTile extends ConsumerWidget {
                       bottom: -3,
                       child: GestureDetector(
                         //bắt sự kiện chạm
-                        onTap: () {
-                          ref
+                        onTap: () async {
+                          final ok = await ref
                               .read(favouriteMoviesProvider.notifier)
                               .toggleFavorite(movie);
-                          // xử lý thêm / bỏ yêu thích
+                          final messenger = ScaffoldMessenger.of(context);
+                          if (ok) {
+                            messenger.showSnackBar(
+                              SnackBar(
+                                content: Text(
+                                  isFav
+                                      ? 'Removed from wishlist'
+                                      : 'Added to wishlist',
+                                ),
+                                duration: Duration(milliseconds: 800),
+                              ),
+                            );
+                          } else {
+                            messenger.showSnackBar(
+                              SnackBar(
+                                content: Text('Could not update wishlist'),
+                                duration: Duration(milliseconds: 1000),
+                              ),
+                            );
+                          }
                         },
                         child: Padding(
                           padding: EdgeInsets.only(top: 4),

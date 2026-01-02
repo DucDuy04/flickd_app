@@ -53,6 +53,7 @@ class _SplashPageState extends State<SplashPage> {
         API_KEY: configData['API_KEY'],
         BASE_API_URL: configData['BASE_API_URL'],
         BASE_IMAGE_API_URL: configData['BASE_IMAGE_API_URL'],
+        BE_URL: configData['BE_URL'],
       ),
     );
     //Lưu ý: cái nào đăng ký trước thì sẽ được lấy ra trước nếu có phụ thuộc lẫn nhau

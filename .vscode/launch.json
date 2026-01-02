@@ -1,0 +1,21 @@
+{
+  // Launch configurations for VS Code debug (Flutter)
+  // Use the "Flutter (Chrome, fixed port)" config to run web on a fixed port.
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Flutter (Chrome, port 5000)",
+      "request": "launch",
+      "type": "dart",
+      "deviceId": "chrome",
+      "args": ["--web-port=5000"]
+    },
+    {
+      "name": "Flutter (Web Server, port 5000)",
+      "request": "launch",
+      "type": "dart",
+      "deviceId": "web-server",
+      "args": ["--web-hostname=0.0.0.0", "--web-port=5000"]
+    }
+  ]
+}

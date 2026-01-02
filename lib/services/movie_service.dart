@@ -95,4 +95,17 @@ class MovieService {
       throw Exception('Failed to load search results');
     }
   }
+
+  Future<Movie?> fetchMovieById(int id) async {
+    Response? _response = await _http?.get('/movie/$id');
+    if (_response?.statusCode == 200) {
+      try {
+        return Movie.fromJson(_response!.data);
+      } catch (e) {
+        print('Error parsing movie detail: $e');
+        return null;
+      }
+    }
+    return null;
+  }
 }
