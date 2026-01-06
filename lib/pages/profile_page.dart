@@ -2,7 +2,7 @@ import 'dart:ui';
 
 import 'package:flickd_app/controllers/profile_controller.dart';
 import 'package:flickd_app/models/movie.dart';
-import 'package:flickd_app/pages/login_page.dart';
+import 'package:flickd_app/pages/auth_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../filter/wishlist_providers.dart';
@@ -407,7 +407,35 @@ class ProfilePage extends ConsumerWidget {
       }
     }
     if (topYear.isEmpty) {
-      return "N/A" as Widget;
+      final Top = 'N/A';
+      return Column(
+        mainAxisSize: MainAxisSize.min,
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          Icon(
+            Icons.arrow_upward,
+            color: const Color.fromARGB(255, 23, 240, 27),
+            size: 32,
+          ),
+          SizedBox(height: 8),
+          Text(
+            Top,
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              color: const Color.fromARGB(255, 255, 255, 255),
+              fontSize: 35,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          SizedBox(height: 4),
+          Text(
+            'Top Year',
+            textAlign: TextAlign.center,
+            style: TextStyle(color: Colors.white70, fontSize: 16),
+          ),
+        ],
+      );
     }
     int maxYear = topYear.keys.first;
     int maxCount = topYear[maxYear]!;
@@ -673,7 +701,7 @@ class ProfilePage extends ConsumerWidget {
               onTap: () {
                 // Handle logout action
                 Navigator.of(context).push(
-                  MaterialPageRoute(builder: (context) => LoginPage()),
+                  MaterialPageRoute(builder: (context) => AuthPage()),
                 ); // Close the profile page
               },
               child: Row(

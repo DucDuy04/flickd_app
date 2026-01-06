@@ -93,11 +93,7 @@ class AuthService {
   Future<String> usernameById(int userId) async {
     final uri = Uri.parse('$_be_url/auth/username/$userId');
     try {
-      print('AuthService.usernameById: requesting $uri');
       final res = await http.get(uri);
-      print(
-        'AuthService.usernameById: status=${res.statusCode} body=${res.body}',
-      );
       if (res.statusCode == 200) {
         final body = res.body;
         try {
@@ -112,7 +108,6 @@ class AuthService {
         throw Exception('Fetch username failed: ${res.statusCode} ${res.body}');
       }
     } catch (e) {
-      print('AuthService.usernameById: error -> $e');
       rethrow;
     }
   }

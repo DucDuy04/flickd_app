@@ -2,5 +2,5 @@
     "API_KEY": "b88cc3595bae980266eb46d838b6d429",
     "BASE_API_URL": "https://api.themoviedb.org/3",
     "BASE_IMAGE_API_URL": "https://image.tmdb.org/t/p/original/",
-    "BE_URL":"http://localhost:8080/api"
+    "BE_URL":"http://192.168.1.10:8080/api"
 }
