@@ -6,7 +6,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 
 import '../models/movie.dart';
-import '../services/movie_service.dart'; // để fetch detail từng movie theo id
+import '../services/movie_service.dart';
 
 final favouriteMoviesProvider =
     NotifierProvider<FavouriteMoviesController, List<Movie>>(
@@ -21,7 +21,7 @@ class FavouriteMoviesController extends Notifier<List<Movie>> {
 
   int? get userId => _userId;
 
-  /// Set currently logged in user id (call this after login)
+  //set userId khi đăng nhập
   void setUserId(int? id) {
     _userId = id;
     if (id != null) fetchFavorites();
@@ -30,7 +30,6 @@ class FavouriteMoviesController extends Notifier<List<Movie>> {
   // Khởi tạo từ backend
   @override
   List<Movie> build() {
-    // Try loading saved userId from prefs (non-blocking)
     _loadSavedUserId();
     fetchFavorites();
     return [];
@@ -53,6 +52,7 @@ class FavouriteMoviesController extends Notifier<List<Movie>> {
   Future<void> fetchFavorites() async {
     if (userId == null) return;
     try {
+      //Gọi BE để lấy filmIds favorite
       final uri = Uri.parse('$_baseUrl/user/$userId');
       final res = await http.get(uri);
       if (res.statusCode == 200) {
@@ -66,6 +66,7 @@ class FavouriteMoviesController extends Notifier<List<Movie>> {
             return movieService.fetchMovieById(parsedId);
           }),
         );
+        // Lọc null và gán lại state
         state = movies.whereType<Movie>().toList();
       } else {
         state = [];
@@ -76,13 +77,14 @@ class FavouriteMoviesController extends Notifier<List<Movie>> {
   }
 
   Future<bool> addFavorite(Movie movie) async {
-    // Optimistic local update so UI toggles immediately
+    //state là list<Movie> đã có
+    //movie là phim cần thêm
+    //state mới = state cũ + movie
     if (!isFavorite(movie.id)) {
       state = [...state, movie];
     }
 
-    if (userId == null)
-      return true; // can't sync to server yet, treat as success
+    if (userId == null) return true;
 
     try {
       final uri = Uri.parse('$_baseUrl/add');
@@ -92,23 +94,20 @@ class FavouriteMoviesController extends Notifier<List<Movie>> {
       };
       final res = await http.post(uri, body: bodyMap);
       if (res.statusCode == 200) {
-        // refresh from server to get canonical wishlist
         await fetchFavorites();
         return true;
       } else {
-        // revert on failure
         state = state.where((m) => m.id != movie.id).toList();
         return false;
       }
     } catch (e) {
-      // network error: revert optimistic change
       state = state.where((m) => m.id != movie.id).toList();
       return false;
     }
     return false;
   }
 
-  /// Toggle favorite: add if not favorite, remove if already favorite
+  // Thêm hoặc xóa favorite tùy trạng thái hiện tại
   Future<bool> toggleFavorite(Movie movie) async {
     if (isFavorite(movie.id)) {
       final ok = await removeFavorite(movie.id);
@@ -120,11 +119,11 @@ class FavouriteMoviesController extends Notifier<List<Movie>> {
   }
 
   Future<bool> removeFavorite(int movieId) async {
-    // Optimistic local removal
+    // Xóa khỏi state ngay
     final existed = isFavorite(movieId);
     if (existed) state = state.where((m) => m.id != movieId).toList();
 
-    if (userId == null) return false; // nothing to sync
+    if (userId == null) return false;
 
     try {
       final uri = Uri.parse('$_baseUrl/remove');
@@ -139,7 +138,6 @@ class FavouriteMoviesController extends Notifier<List<Movie>> {
       }
       return false;
     } catch (e) {
-      // network error: nothing further here
       return false;
     }
   }

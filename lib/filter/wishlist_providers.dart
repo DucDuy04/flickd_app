@@ -62,7 +62,7 @@ final providedLanguagesProvider = Provider<List<Map<String, String>>>((_) {
 
 // Provider trả về danh sách phim đã lọc/sắp xếp
 final filteredAndSortedFavouritesProvider = Provider<List<Movie>>((ref) {
-  final favs = ref.watch(favouriteMoviesProvider); // --> lấy từ backend
+  final favs = ref.watch(favouriteMoviesProvider); // lấy từ backend
   final filters = ref.watch(filtersProviders);
 
   final selectedLang = (filters.languageCode).toUpperCase();

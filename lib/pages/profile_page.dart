@@ -330,7 +330,7 @@ class ProfilePage extends ConsumerWidget {
       final parsed = DateTime.tryParse(dateStr);
       if (parsed == null) return false;
 
-      // inclusive: true nếu releaseDate >= startOfToday
+      // Kiểm tra nếu ngày phát hành sau hoặc bằng ngày hôm nay
       return !parsed.isBefore(startOfToday);
     }).length;
 

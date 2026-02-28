@@ -12,7 +12,7 @@ class ProfileController extends Notifier<String?> {
 
   int? get userId => _userId;
 
-  /// Set currently logged in user id (call this after login)
+  //set userId khi đăng nhập
   void setUserId(int? id) {
     _userId = id;
     if (id != null) _fetchUsername();
@@ -20,7 +20,6 @@ class ProfileController extends Notifier<String?> {
 
   @override
   String? build() {
-    // Non-blocking initial loads
     _loadSavedUsername();
     _loadSavedUserId();
     return null;
@@ -31,7 +30,7 @@ class ProfileController extends Notifier<String?> {
     final saved = prefs.getInt('userId');
     if (saved != null) {
       _userId = saved;
-      // loaded userId from prefs
+      // fetch username nếu có userId
       _fetchUsername();
     }
   }
@@ -53,19 +52,16 @@ class ProfileController extends Notifier<String?> {
 
   Future<void> _fetchUsername() async {
     if (_userId == null) return;
-    // fetching username
+    // nếu có userId, gọi AuthService để lấy username
     try {
       final auth = AuthService();
       final name = await auth.usernameById(_userId!);
       state = name;
       await _saveUsername(name);
-      // fetched username
-    } catch (e) {
-      // fetch failed
-    }
+    } catch (e) {}
   }
 
-  /// Manually set username (saves to prefs and updates state)
+  //set username và lưu vào prefs
   Future<void> setUsername(String? name) async {
     state = name;
     await _saveUsername(name);

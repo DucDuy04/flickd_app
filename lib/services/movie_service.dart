@@ -9,10 +9,8 @@ import '../services/http_service.dart';
 import '../models/movie.dart';
 
 class MovieService {
-  //Lấy instance GetIt toàn cục
   final GetIt getIt = GetIt.instance;
 
-  //Khai báo biến _http kiểu HTTPService? (có thể null)
   HTTPService? _http;
 
   //Khởi tạo MovieService, gán biến _http với instance HTTPService từ GetIt
@@ -29,7 +27,6 @@ class MovieService {
     );
 
     if (_response?.statusCode == 200) {
-      //Nếu status code là 200 (thành công), parse dữ liệu
       Map<String, dynamic> _data = _response!.data;
       List<Movie> _movies = [];
 

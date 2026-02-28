@@ -71,9 +71,7 @@ class WishlistPage extends ConsumerWidget {
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             _topBarWidget(deviceWidth, deviceHeight, ref),
-            SizedBox(
-              height: deviceHeight * 0.02,
-            ), //khoảng cách giữa top bar và danh sách phim
+            SizedBox(height: deviceHeight * 0.02),
             Expanded(
               //Dùng Expanded để cho widget con chiếm toàn bộ không gian còn lại
               child: Padding(

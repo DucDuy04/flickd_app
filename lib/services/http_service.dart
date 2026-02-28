@@ -9,9 +9,8 @@ import 'package:get_it/get_it.dart';
 // với query params mặc định (api_key, language) và query phụ
 class HTTPService {
   final Dio dio = Dio();
-  //Tạo dio
   final GetIt getIt = GetIt.instance;
-  //Lấy instance GetIt toàn cục
+
   String? _base_url;
   String? _api_key;
 
@@ -28,7 +27,7 @@ class HTTPService {
   //Tham số tùy chọn: query (Map các query params bổ sung)
   Future<Response?> get(String _path, {Map<String, dynamic>? query}) async {
     try {
-      String _url = '$_base_url$_path'; //tạo thành 1 url đầy đủ
+      String _url = '$_base_url$_path';
       Map<String, dynamic> _query = {'api_key': _api_key, 'language': 'en-US'};
       //tạo map query mặc định chứa api_key và language
       if (query != null) {

@@ -38,9 +38,8 @@ class _SplashPageState extends State<SplashPage> {
   Future<void> _setup(BuildContext _context) async {
     //HÀm bất đồng bộ, đọc config và đăng ký các service trong GetIt
     final getIt = GetIt.instance;
-    //Lấy instance GetIt toàn cục
-    //Đọc file config JSON từ assets
 
+    //Đọc file config JSON từ assets
     final configFile = await rootBundle.loadString('assets/config/main.json');
     //rootBundle.loadString lấy nội dung file asset ở đường dẫn đó. File phải được khai báo trong pubspec.yaml.
     final configData = jsonDecode(configFile);
@@ -58,8 +57,6 @@ class _SplashPageState extends State<SplashPage> {
     );
     //Lưu ý: cái nào đăng ký trước thì sẽ được lấy ra trước nếu có phụ thuộc lẫn nhau
     //Ở đây HTTPService phụ thuộc AppConfig nên phải đăng ký AppConfig trước
-
-    //Chỉ có 1 kết nối HTTP duy nhất trong toàn app
     getIt.registerSingleton<HTTPService>(HTTPService());
 
     //MovieService dùng để:Gọi API phim,Parse dữ liệu,Trả về danh sách Movie
@@ -68,8 +65,6 @@ class _SplashPageState extends State<SplashPage> {
 
   @override
   Widget build(BuildContext context) {
-    //Hiển thị logo ở giữa
-    //Giao diện của splash page
     return MaterialApp(
       title: 'Flickd',
       theme: ThemeData(primarySwatch: Colors.blue),

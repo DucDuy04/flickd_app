@@ -1,11 +1,16 @@
+//packages
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+//services
 import '../services/auth_service.dart';
+//controllers
 import '../controllers/wishlist_controller.dart';
 import '../controllers/profile_controller.dart';
 
 class AuthPage extends ConsumerStatefulWidget {
+  // StatefulWidget: cần quản lý form, loading, error
+  // Consumer: cho phép đọc, ghi Riverpod providers
   const AuthPage({Key? key}) : super(key: key);
 
   @override
@@ -23,11 +28,10 @@ class _AuthPageState extends ConsumerState<AuthPage> {
   final _confirmPasswordController = TextEditingController();
   final AuthService _authService = AuthService();
 
-  // State
   String _message = '';
   bool _isLoading = false;
   bool _passwordVisible = false;
-  // Field-specific error messages
+
   String _usernameError = '';
   String _emailError = '';
   String _passwordError = '';
@@ -50,7 +54,7 @@ class _AuthPageState extends ConsumerState<AuthPage> {
       _emailError = '';
       _passwordError = '';
       _confirmPasswordError = '';
-      // Clear all form fields when switching tabs
+      //Xóa tất cả field khi chuyển tab
       _usernameController.clear();
       _emailController.clear();
       _passwordController.clear();
@@ -58,24 +62,24 @@ class _AuthPageState extends ConsumerState<AuthPage> {
     });
   }
 
-  // ==================== LOGIN ====================
+  // ----------------LOGIN------------------
   Future<void> _login() async {
-    // Clear previous field errors
+    //Xóa lỗi cũ
     setState(() {
       _usernameError = '';
       _passwordError = '';
       _message = '';
     });
 
-    // Validate empty fields
+    //Kiểm tra trường trống
     if (_usernameController.text.trim().isEmpty ||
         _passwordController.text.trim().isEmpty) {
       setState(() {
         if (_usernameController.text.trim().isEmpty) {
-          _usernameError = 'Please enter username';
+          _usernameError = 'Vui lòng nhập tên người dùng';
         }
         if (_passwordController.text.trim().isEmpty) {
-          _passwordError = 'Please enter password';
+          _passwordError = 'Vui lòng nhập mật khẩu';
         }
       });
       return;
@@ -87,7 +91,7 @@ class _AuthPageState extends ConsumerState<AuthPage> {
     });
 
     try {
-      // Use the username controller for login (login form shows Username field)
+      //Gọi hàm login từ AuthService
       final result = await _authService.login(
         _usernameController.text,
         _passwordController.text,
@@ -120,14 +124,14 @@ class _AuthPageState extends ConsumerState<AuthPage> {
           parsedUserId != null;
 
       if (success) {
-        if (parsedUserId == null) {
-          try {
-            final profile = await _authService.fetchCurrentUser();
-            if (profile is Map && profile['id'] != null) {
-              parsedUserId = int.tryParse(profile['id'].toString());
-            }
-          } catch (_) {}
-        }
+        // if (parsedUserId == null) {
+        //   try {
+        //     final profile = await _authService.fetchCurrentUser();
+        //     if (profile is Map && profile['id'] != null) {
+        //       parsedUserId = int.tryParse(profile['id'].toString());
+        //     }
+        //   } catch (_) {}
+        // }
 
         if (parsedUserId != null) {
           try {
@@ -158,9 +162,9 @@ class _AuthPageState extends ConsumerState<AuthPage> {
     }
   }
 
-  // ==================== REGISTER ====================
+  // ---------------REGISTER------------------
   Future<void> _register() async {
-    // Clear previous field errors
+    //Xóa lỗi cũ
     setState(() {
       _usernameError = '';
       _emailError = '';
@@ -169,22 +173,22 @@ class _AuthPageState extends ConsumerState<AuthPage> {
       _message = '';
     });
 
-    // Validate empty fields
+    // Kiểm tra trường trống
     bool hasEmpty = false;
     if (_usernameController.text.trim().isEmpty) {
-      _usernameError = 'Please enter username';
+      _usernameError = 'Vui lòng nhập tên người dùng';
       hasEmpty = true;
     }
     if (_emailController.text.trim().isEmpty) {
-      _emailError = 'Please enter email';
+      _emailError = 'Vui lòng nhập email';
       hasEmpty = true;
     }
     if (_passwordController.text.trim().isEmpty) {
-      _passwordError = 'Please enter password';
+      _passwordError = 'Vui lòng nhập mật khẩu';
       hasEmpty = true;
     }
     if (_confirmPasswordController.text.trim().isEmpty) {
-      _confirmPasswordError = 'Please confirm password';
+      _confirmPasswordError = 'Vui lòng xác nhận mật khẩu';
       hasEmpty = true;
     }
     if (hasEmpty) {
@@ -192,10 +196,9 @@ class _AuthPageState extends ConsumerState<AuthPage> {
       return;
     }
 
-    //validate username
     if (_usernameController.text.trim().length < 3) {
       setState(() {
-        _usernameError = 'Username must be at least 3 characters long';
+        _usernameError = 'Tên người dùng phải có ít nhất 3 ký tự';
       });
       return;
     }
@@ -243,18 +246,17 @@ class _AuthPageState extends ConsumerState<AuthPage> {
       return;
     }
 
-    // Validate password strength
+    // Validate mật khẩu
     if (_passwordController.text.length < 6) {
       setState(() {
-        _passwordError = 'Password must be at least 6 characters long';
+        _passwordError = 'Mật khẩu phải có ít nhất 6 ký tự';
       });
       return;
     }
 
-    // Validate confirm password
     if (_passwordController.text != _confirmPasswordController.text) {
       setState(() {
-        _confirmPasswordError = 'Passwords do not match';
+        _confirmPasswordError = 'Mật khẩu không khớp';
       });
       return;
     }
@@ -273,10 +275,10 @@ class _AuthPageState extends ConsumerState<AuthPage> {
 
       if (msg.toLowerCase().contains('success') ||
           msg.toLowerCase().contains('thành công')) {
-        // Switch to login tab (this will clear all fields automatically)
+        // Chuyển sang tab Login
         _switchTab(0);
         setState(() {
-          _message = 'Registration successful! Please login.';
+          _message = 'Đăng ký thành công! Vui lòng đăng nhập.';
         });
       } else {
         setState(() => _message = msg);
@@ -325,7 +327,6 @@ class _AuthPageState extends ConsumerState<AuthPage> {
     );
   }
 
-  // ==================== SHARED WIDGETS ====================
   Widget _buildLogo() {
     return Column(
       children: [
@@ -368,7 +369,7 @@ class _AuthPageState extends ConsumerState<AuthPage> {
         children: [
           _buildTabButtons(),
           const SizedBox(height: 24),
-          // Animated switch giữa Login và Register form
+          //AnimatedSwitcher để chuyển đổi mượt giữa form Login và Register
           AnimatedSwitcher(
             duration: const Duration(milliseconds: 300),
             child: _currentTab == 0 ? _buildLoginForm() : _buildRegisterForm(),
@@ -416,15 +417,15 @@ class _AuthPageState extends ConsumerState<AuthPage> {
     );
   }
 
-  // ==================== LOGIN FORM ====================
+  // ------------------- LOGIN FORM -------------------
   Widget _buildLoginForm() {
     return Column(
       key: const ValueKey('login'),
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         _buildTextField(
-          label: 'Username',
-          hint: 'Enter your username',
+          label: 'Tên người dùng',
+          hint: 'Nhập tên người dùng',
           controller: _usernameController,
           icon: Icons.person_outline,
           error: _usernameError,
@@ -438,7 +439,7 @@ class _AuthPageState extends ConsumerState<AuthPage> {
           child: TextButton(
             onPressed: () {},
             child: const Text(
-              'Forgot Password?',
+              'Quên mật khẩu?',
               style: TextStyle(color: Color(0xFFE85D04), fontSize: 12),
             ),
           ),
@@ -451,15 +452,15 @@ class _AuthPageState extends ConsumerState<AuthPage> {
     );
   }
 
-  // ==================== REGISTER FORM ====================
+  // ------------------- REGISTER FORM -------------------
   Widget _buildRegisterForm() {
     return Column(
       key: const ValueKey('register'),
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         _buildTextField(
-          label: 'Username',
-          hint: 'Enter your username',
+          label: 'Tên người dùng',
+          hint: 'Nhập tên người dùng',
           controller: _usernameController,
           icon: Icons.person_outline,
           error: _usernameError,
@@ -468,7 +469,7 @@ class _AuthPageState extends ConsumerState<AuthPage> {
         const SizedBox(height: 16),
         _buildTextField(
           label: 'Email',
-          hint: 'Enter your email',
+          hint: 'Nhập email',
           controller: _emailController,
           icon: Icons.email_outlined,
           error: _emailError,
@@ -477,7 +478,6 @@ class _AuthPageState extends ConsumerState<AuthPage> {
         const SizedBox(height: 16),
         _buildPasswordField(),
         const SizedBox(height: 16),
-        // Confirm password field
         _buildConfirmPasswordField(),
         const SizedBox(height: 20),
         _buildPrimaryButton('Create Account', _register),
@@ -487,7 +487,6 @@ class _AuthPageState extends ConsumerState<AuthPage> {
     );
   }
 
-  // ==================== REUSABLE COMPONENTS ====================
   Widget _buildTextField({
     required String label,
     required String hint,
@@ -533,7 +532,7 @@ class _AuthPageState extends ConsumerState<AuthPage> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         const Text(
-          'Password',
+          'Mật khẩu',
           style: TextStyle(color: Colors.white, fontSize: 14),
         ),
         const SizedBox(height: 8),
@@ -543,7 +542,7 @@ class _AuthPageState extends ConsumerState<AuthPage> {
           onChanged: (v) => setState(() => _passwordError = ''),
           style: const TextStyle(color: Colors.white),
           decoration: InputDecoration(
-            hintText: 'Enter your password',
+            hintText: 'Nhập mật khẩu',
             hintStyle: const TextStyle(color: Colors.white38),
             prefixIcon: const Icon(Icons.lock_outline, color: Colors.white38),
             suffixIcon: IconButton(
@@ -578,7 +577,7 @@ class _AuthPageState extends ConsumerState<AuthPage> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         const Text(
-          'Confirm Password',
+          'Xác nhận mật khẩu',
           style: TextStyle(color: Colors.white, fontSize: 14),
         ),
         const SizedBox(height: 8),
@@ -588,7 +587,7 @@ class _AuthPageState extends ConsumerState<AuthPage> {
           onChanged: (v) => setState(() => _confirmPasswordError = ''),
           style: const TextStyle(color: Colors.white),
           decoration: InputDecoration(
-            hintText: 'Re-enter your password',
+            hintText: 'Nhập lại mật khẩu',
             hintStyle: const TextStyle(color: Colors.white38),
             prefixIcon: const Icon(Icons.lock_outline, color: Colors.white38),
             filled: true,

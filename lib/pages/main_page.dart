@@ -137,10 +137,10 @@ class MainPage extends ConsumerWidget {
       return Positioned.fill(
         child: Container(
           decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(10.0), //bo góc
+            borderRadius: BorderRadius.circular(10.0),
             image: DecorationImage(
-              image: NetworkImage(selectMoviePosterURL), //lấy ảnh từ URL
-              fit: BoxFit.cover, //ảnh phủ đầy bg
+              image: NetworkImage(selectMoviePosterURL),
+              fit: BoxFit.cover,
             ),
           ),
           child: BackdropFilter(
@@ -365,9 +365,8 @@ class MainPage extends ConsumerWidget {
         },
         child: ListView.builder(
           //danh sách phim dạng cuộn
-          itemCount: movies.length, //số lượng phần tử
+          itemCount: movies.length,
           itemBuilder: (context, count) {
-            //hàm xây dựng từng phần tử
             return Padding(
               padding: EdgeInsets.symmetric(
                 //khoảng cách giữa các phần tử
